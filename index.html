@@ -761,13 +761,6 @@ async function loadProds(){
   loader(false);renderAll();
 }
 
-async function purgeJsDelivr(){
-  try{
-    const purgeUrl=`https://purge.jsdelivr.net/gh/${GH.user}/${GH.repo}@main/${GH.path}`;
-    await fetch(purgeUrl);
-  }catch{}
-}
-
 async function pushToGH(msg='✅ تم الحفظ'){
   loader(true,'جاري حفظ التغييرات...');
   const payload={_v:Date.now(),items:prods};
@@ -775,11 +768,12 @@ async function pushToGH(msg='✅ تم الحفظ'){
   const url=`https://api.github.com/repos/${GH.user}/${GH.repo}/contents/${GH.path}`;
   try{
     const r=await fetch(url,{method:'PUT',headers:ghH(),body:JSON.stringify({message:'Update products',content:b64,sha})});
-    if(r.ok){const d=await r.json();sha=d.content.sha;renderAll();toast(msg,'success');purgeJsDelivr();}
+    if(r.ok){const d=await r.json();sha=d.content.sha;renderAll();toast(msg,'success');}
     else toast('❌ خطأ أثناء الحفظ','danger');
   }catch{toast('❌ تعذّر الاتصال','danger');}
   loader(false);
 }
+
 function ghH(){return{'Authorization':`token ${GH.token}`,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'};}
 
 // ══════════════════════════════════════════
